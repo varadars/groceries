@@ -1,0 +1,124 @@
+html, body {
+    margin-top: 0;
+    padding-top: 0;
+    font-family: 'Monaco', sans-serif;
+    background-color: #bad0f1;
+    color: #1d0e04;
+    user-select: none;
+}
+
+img {
+    margin: 0 auto;
+    width: 250px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 320px;
+    margin: 30px auto;
+    padding: 15px 15px 15px 15px;
+}
+
+.right {
+    text-align: right;
+    padding: 0 0 0 0;
+}
+
+input {
+    color: #1d0e04;
+    background-color: #DCE1EB;
+    border-style: none;
+    border-radius: 8px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
+    font-family: 'Rubik', sans-serif;
+    text-align: center;
+    font-family: 'Monaco', sans-serif;
+}
+
+button {
+    color: #fefefe;
+    background-color: #FFAD05;
+    border: 0;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Monaco', sans-serif;
+}
+
+button:hover {
+    background-color: #d95358;
+}
+
+.small-circle {
+    background-color: #d95358;
+    font-size: 8px;
+    max-width: fit-content;
+    text-align: center;
+    padding: 4px 8px 4px 8px;
+    margin: 0 0 0 0;
+}
+
+.small-circle:hover {
+    background-color: #ec0008;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+}
+
+ul li {
+    background-color: #fce785;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 15px 15px 15px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    font-size: 20px;
+    flex-grow: 1;
+    text-align: center;
+    border-color: #fce785;
+    border-width: 3px;
+    border-style: solid;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px 0 0 0;
+
+}
+
+ul li li {
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 20px;
+    display: list-item;
+    padding: 0 0 0 0;
+    text-align: center;
+    margin: 0 0 0 0;
+    border-style: none;
+}
+
+.day {
+    font-size: 12px; 
+    text-align: center;
+    margin-top: 3px;
+}
+
+ul li:hover {
+    background-color: #d95358;
+    border-color: white;
+    border-style: solid;
+}
+
+ul li li:hover {
+    border-style: none;
+}
