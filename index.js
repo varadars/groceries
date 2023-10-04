@@ -10,7 +10,7 @@ import { getDatabase, ref, push, onValue, remove } from
 
 
 const appSettings = {
-    databaseURL: "https://realtime-database-8d785-default-rtdb.firebaseio.com/"
+    databaseURL: //ommitted
 }
 
 const app = initializeApp(appSettings)
