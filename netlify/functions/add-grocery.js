@@ -1,15 +1,12 @@
-const admin = require("firebase-admin");
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push } from "firebase/database";
 
-// Avoid reinitializing the app on every call
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL:
-      "https://realtime-database-8d785-default-rtdb.firebaseio.com/",
-  });
-}
+const firebaseConfig = {
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+};
 
-const db = admin.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 function today() {
   const weekday = [
@@ -24,22 +21,21 @@ function today() {
   return weekday[new Date().getDay()];
 }
 
-exports.handler = async (event) => {
+export async function handler(event) {
   try {
     const alexaRequest = JSON.parse(event.body);
     const item =
       alexaRequest.request?.intent?.slots?.item?.value;
 
-    if (!item) {
-      throw new Error("No item provided");
-    }
+    if (!item) throw new Error("No item provided");
 
     const itemStruct = [item, today()];
-    const refPath = db.ref("shoppingList");
-    await refPath.push(itemStruct);
+    const shoppingListRef = ref(db, "shoppingList");
+    await push(shoppingListRef, itemStruct);
 
     return {
       statusCode: 200,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         version: "1.0",
         response: {
@@ -52,10 +48,10 @@ exports.handler = async (event) => {
       }),
     };
   } catch (err) {
-    console.error("Error:", err);
-
+    console.error(err);
     return {
       statusCode: 200,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         version: "1.0",
         response: {
@@ -68,4 +64,4 @@ exports.handler = async (event) => {
       }),
     };
   }
-};
+}
