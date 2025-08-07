@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push } from "firebase/database";
 
 const firebaseConfig = {
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
 };
 
 const app = initializeApp(firebaseConfig);
