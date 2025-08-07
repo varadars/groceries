@@ -12,3 +12,5 @@ dist/
 
 # Node dependencies
 node_modules/
+# Local Netlify folder
+.netlify
