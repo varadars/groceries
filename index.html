@@ -14,16 +14,25 @@
     </head>
     <body>
         <div class ="container">
-            <div class = "right">
+            <!-- <div class = "right">
                 <button class="small-circle" id="clear-list">Clear List</button>
-            </div>
+            </div> -->
             <img src="assets/cat.png">
             <input type="text" id="input-field" placeholder="Gatgis Numero Tres">
             <button id="add-button">Add to cart</button>
-            <div class="container">
-                <ul id ="shopping-list">
-                </ul>
+            <div class="tabs">
+                <div class="tabnav">
+                    <div class="tab active" id="groceries-tab">Groceries</div>
+                    <div class="tab" id="travel-tab">Travel</div>
+                </div>
+                <div class="container">
+                    <ul id ="shopping-list">
+                    </ul>
+                    <ul id ="travel-list">
+                    </ul>
+                </div>
             </div>
+    
         </div>
         <script src="index.js" type="module"></script>
     </body>

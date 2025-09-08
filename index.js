@@ -1,8 +1,3 @@
-//this is importing a function from another .js file to initialize the application
-//pretty sure the source location is open source by Google
-//but it might also be from Scrimba
-
-//realtimedb url = https://realtime-database-8d785-default-rtdb.firebaseio.com/
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import {
   getDatabase,
@@ -12,109 +7,163 @@ import {
   remove,
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
+// --- Firebase Setup ---
 const appSettings = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
 };
-
 const app = initializeApp(appSettings);
 const database = getDatabase(app);
-const shoppingListInDB = ref(database, "shoppingList");
 
-//everything above this is creating the application and linking it to firebase
+const shoppingListInDB = ref(database, "shoppingList");
+const travelListInDB = ref(database, "travelList");
+let currentList = shoppingListInDB;
+
+// --- DOM Elements ---
 const inputFieldEl = document.getElementById("input-field");
 const addButtonEl = document.getElementById("add-button");
 const shoppingListEl =
   document.getElementById("shopping-list");
-const clearListButtonEl =
-  document.getElementById("clear-list");
+const travelListEl = document.getElementById("travel-list");
+const groceriesTabEl =
+  document.getElementById("groceries-tab");
+const travelTabEl = document.getElementById("travel-tab");
 
-//option 1: click the button to add
-addButtonEl.addEventListener("click", function () {
-  pushToFirebase(inputFieldEl.value);
+// --- List Listeners ---
+setupListListener(
+  shoppingListInDB,
+  shoppingListEl,
+  groceriesTabEl,
+  "shoppingList"
+);
+setupListListener(
+  travelListInDB,
+  travelListEl,
+  travelTabEl,
+  "travelList"
+);
+
+// --- Tab Switching ---
+
+travelTabEl.addEventListener("click", () =>
+  switchTab(
+    travelListInDB,
+    travelTabEl,
+    groceriesTabEl,
+    travelListEl,
+    shoppingListEl
+  )
+);
+
+groceriesTabEl.addEventListener("click", () =>
+  switchTab(
+    shoppingListInDB,
+    groceriesTabEl,
+    travelTabEl,
+    shoppingListEl,
+    travelListEl
+  )
+);
+
+// --- Add Item Events ---
+addButtonEl.addEventListener("click", () =>
+  pushToFirebase(inputFieldEl.value)
+);
+inputFieldEl.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") pushToFirebase(inputFieldEl.value);
 });
 
-//option 2: press enter to add
-inputFieldEl.addEventListener("keypress", function (event) {
-  if (event.key === "Enter") {
-    pushToFirebase(inputFieldEl.value);
-  }
-});
-
-clearListButtonEl.addEventListener("dblclick", function () {
-  let locString = `shoppingList`;
-  let firebaseLocList = ref(database, locString);
-  remove(firebaseLocList);
-});
-
-onValue(shoppingListInDB, function (snapshot) {
-  if (snapshot.exists()) {
-    let shoppingList = Object.entries(snapshot.val());
-    clearOnScreenList();
-    for (let i = 0; i < shoppingList.length; i++) {
-      let currentStruct = shoppingList[i];
-      addToList(currentStruct);
+// --- Helpers ---
+function setupListListener(
+  dbRef,
+  listElement,
+  listToggleEl,
+  listName
+) {
+  onValue(dbRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      listElement.innerHTML = "No items here... yet";
+      return;
     }
-  } else {
-    shoppingListEl.innerHTML = "No items here... yet";
-  }
-});
+    listElement.innerHTML = "";
+    for (let [id, [name, date]] of Object.entries(
+      snapshot.val()
+    )) {
+      addToList(listElement, listName, id, name, date);
+    }
+    if (!listToggleEl.classList.contains("active")) {
+      listElement.classList.add("hide");
+    }
+  });
+}
 
-//push Item to firebase
-function pushToFirebase(inputFieldValue) {
-  let inputStruct = [inputFieldValue, today()];
-  //push to Firebase
-  push(shoppingListInDB, inputStruct);
-  //clear
+function pushToFirebase(value) {
+  if (!value.trim()) return;
+  push(currentList, [value, today()]);
   clearInput();
 }
 
-//called when rendering the list
-function addToList(newStruct) {
-  //shoppingListEl.innerHTML += `<li> ${leString} </li>`
-  let currentItemId = newStruct[0];
-  let currentItemName = newStruct[1][0];
-  let currentDay = newStruct[1][1];
-
-  currentItemName = toTitleCase(currentItemName);
-
-  let listItemEl = document.createElement("li");
-  listItemEl.innerHTML = `<li class="item"> ${currentItemName} </li> <li class="day"> since ${currentDay} </li>`;
-  shoppingListEl.append(listItemEl);
-
-  listItemEl.addEventListener("dblclick", function () {
-    let locString = `shoppingList/${currentItemId}`;
-    let firebaseLocGrocery = ref(database, locString);
-    remove(firebaseLocGrocery);
-  });
+function addToList(listElement, listName, id, name, date) {
+  let item = document.createElement("li");
+  item.innerHTML = `
+    <li class="item">${toTitleCase(name)}</li>
+    <li class="day">since ${toRelativeDate(date)}</li>
+  `;
+  item.addEventListener("dblclick", () =>
+    remove(ref(database, `${listName}/${id}`))
+  );
+  listElement.append(item);
 }
 
 function clearInput() {
   inputFieldEl.value = "";
 }
 
-function clearOnScreenList() {
-  shoppingListEl.innerHTML = "";
+function switchTab(
+  newList,
+  activeTab,
+  inactiveTab,
+  showEl,
+  hideEl
+) {
+  activeTab.classList.add("active");
+  inactiveTab.classList.remove("active");
+  showEl.classList.remove("hide");
+  hideEl.classList.add("hide");
+  currentList = newList;
 }
 
+// --- Utilities ---
 function today() {
-  const weekday = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const d = new Date();
-  let day = weekday[d.getDay()];
-  return day;
+  return new Date().toString();
 }
+
+function toRelativeDate(str) {
+  const d = new Date(str);
+  if (isNaN(d)) return "before";
+
+  const now = new Date();
+  const daysAgo = (now - d) / 86400000;
+  if (daysAgo < 6) {
+    return [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ][d.getDay()];
+  }
+  return `${
+    d.getMonth() + 1
+  }/${d.getDate()}/${d.getFullYear()}`;
+}
+
 function toTitleCase(str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return (
+  return str.replace(
+    /\w\S*/g,
+    (txt) =>
       txt.charAt(0).toUpperCase() +
       txt.substr(1).toLowerCase()
-    );
-  });
+  );
 }

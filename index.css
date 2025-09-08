@@ -7,22 +7,62 @@ html, body {
     user-select: none;
 }
 
+body {
+    padding: 50px 0px;
+}
+
 img {
     margin: 0 auto;
-    width: 250px;
+    width: 150px;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     max-width: 320px;
+    margin: auto;
+    padding: 0;
+}
+
+.hide {
+    display: none;
+}
+
+.tabs {
     margin: 30px auto;
-    padding: 15px 15px 15px 15px;
+    background-color: #a2b7d6;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.tabnav {
+    background-color: #8095b3;
+    display: flex;
+    padding: 4px 6px;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 1000px;
+    min-width: 280px;
+}
+
+.tab {
+    text-align: center;
+    background-color: #8095b3;
+    color: white;
+    padding: 4px;
+    border-radius: 1000px;
+    width: 50%;
+}
+
+.active {
+    background-color: #DCE1EB;
+    color: black;
 }
 
 .right {
     text-align: right;
-    padding: 0 0 0 0;
+    padding: 15px 0px;
 }
 
 input {
@@ -73,7 +113,6 @@ ul {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-
 }
 
 ul li {
@@ -93,7 +132,6 @@ ul li {
 h1 {
     text-align: center;
     margin: 50px 0 0 0;
-
 }
 
 ul li li {
